@@ -161,3 +161,6 @@ cython_debug/
 
 # So i dont publish the client id of the app like an idiot
 credentials
+
+# Temp files from windows?
+tempCodeRunnerFile.py
