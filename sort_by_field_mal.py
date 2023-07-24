@@ -10,8 +10,9 @@ def getClientID():
 
 CLIENT_ID = getClientID()
 
+# Added a limit of 50 anime to tests, needs to be removed after
 def getListFromUser(username: str):
-  url = f'https://api.myanimelist.net/v2/users/{username}/animelist?status=completed&limit=1000&fields=id,title,mean,popularity,num_list_users,num_scoring_users,list_status,start_season'
+  url = f'https://api.myanimelist.net/v2/users/{username}/animelist?status=completed&limit=50&fields=id,title,mean,popularity,num_list_users,num_scoring_users,list_status,start_season'
   response = requests.get(url, headers={
     'X-MAL-CLIENT-ID': CLIENT_ID
   })

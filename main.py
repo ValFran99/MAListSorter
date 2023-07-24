@@ -11,7 +11,7 @@
 # https://github.com/Gumpy-Q/MALscrap-suite
 
 
-import PySimpleGUI
+import PySimpleGUI as sg
 import sort_by_field_mal as logic_code
 import time
 import winsound
@@ -43,17 +43,17 @@ POSSIBLE_FIELDS = {
 
 MAL_DATASET_CSV = "MAL_dataset_Winter_2022.csv"
 
-def createMainWindow():
+def createMainWindow(username: str):
   layout = [
-      [PySimpleGUI.Text("Select the desired field to sort")],
-      [PySimpleGUI.Button("Sort by members"), PySimpleGUI.Button("Sort by global score"),
-        PySimpleGUI.Button("Sort by amount of episodes"), PySimpleGUI.Button("Sort by release year"),
-        PySimpleGUI.Button("Sort anime titles alphabetically")
+      [sg.Text("Select the desired field to sort")],
+      [sg.Button("Sort by members"), sg.Button("Sort by global score"),
+        sg.Button("Sort by amount of episodes"), sg.Button("Sort by release year"),
+        sg.Button("Sort anime titles alphabetically")
         ],
-      [PySimpleGUI.Multiline(autoscroll=True, size=(900, 600), auto_refresh=True, reroute_stdout=True)]
+      [sg.Multiline(autoscroll=True, size=(900, 600), auto_refresh=True, reroute_stdout=True)]
   ]
 
-  return PySimpleGUI.Window("MAL account sorter", layout, size=(1000, 600))
+  return sg.Window(f"Welcome {username}!", layout, size=(1000, 600))
 
 
 def main():
@@ -61,18 +61,16 @@ def main():
   username, animeList = askForUserList()
   if(username == None):
     return
+  print(animeList)
   print(username)
-  window = createMainWindow()
+  window = createMainWindow(username)
 
   while True:
     event, values = window.read()
-    if event == PySimpleGUI.WIN_CLOSED:
+    if event == sg.WIN_CLOSED:
       break
-    try:
-      desiredField, nameOfTheField = POSSIBLE_FIELDS[event]
-    except KeyError:
-      print("Again!")
-      continue
+    
+    desiredField, nameOfTheField = POSSIBLE_FIELDS[event]
 
     sortedAccount = logic_code.sortMalAccountByDesiredField(malAccountPath, MAL_DATASET_CSV, desiredField)
     logic_code.cutePrint(sortedAccount, nameOfTheField)
@@ -86,7 +84,7 @@ def askForUserList():
   window = createAskForUserListWindow()
   while True:
     event, values = window.read()
-    if event == PySimpleGUI.WIN_CLOSED:
+    if event == sg.WIN_CLOSED or event == "Escape:27":
       return None, None
     if event == "usernameInput" + "_Enter":
       if values["usernameInput"] == "":
@@ -102,7 +100,7 @@ def askForUserList():
       
       if not animeList:
         winsound.PlaySound("Windows Ding.wav", winsound.SND_FILENAME | winsound.SND_ASYNC)
-        PySimpleGUI.popup("The list is set to private or the username doesn't exist")
+        sg.popup("The list is set to private or the username doesn't exist", any_key_closes=True)
         continue
       
       window.close()
@@ -116,25 +114,25 @@ def checkIfThePathIsValid(path):
 
 def createAskForUserListWindow():
   layout = [
-      [PySimpleGUI.Text(USERNAME_INPUT_WINDOW_TEXT, justification="center", key="userWindowText")],
-      [PySimpleGUI.Input(key="usernameInput")]
+      [sg.Text(USERNAME_INPUT_WINDOW_TEXT, justification="center", key="userWindowText")],
+      [sg.Input(key="usernameInput")]
   ]
-  window = PySimpleGUI.Window("Enter your username", layout, size=(500, 100),
-                              element_justification='c', finalize=True)
+  window = sg.Window("Enter your username", layout, size=(500, 100),
+                              element_justification='c', finalize=True, return_keyboard_events=True)
   window["usernameInput"].bind("<Return>", "_Enter")
   return window
   
 def askForFileOut(sortedAccount, nameOfTheField):
   layout = [
-      [PySimpleGUI.Text("Fileout to a text file?", size=(100, None), justification="center")],
-      [PySimpleGUI.Button("Yes"), PySimpleGUI.Button("No")]
+      [sg.Text("Fileout to a text file?", size=(100, None), justification="center")],
+      [sg.Button("Yes"), sg.Button("No")]
   ]
-  window = PySimpleGUI.Window("Fileout choice", layout, size=(250, 80), element_justification='c', modal=True)
+  window = sg.Window("Fileout choice", layout, size=(250, 80), element_justification='c', modal=True)
 
   while True:
     event, values = window.read()
 
-    if event == PySimpleGUI.WIN_CLOSED:
+    if event == sg.WIN_CLOSED:
       break
     if event == "Yes":
       if not outputToFile(sortedAccount, nameOfTheField):
@@ -152,7 +150,7 @@ def askForOutputPath():
   path = None
   while True:
     event, values = window.read()
-    if event == PySimpleGUI.WIN_CLOSED:
+    if event == sg.WIN_CLOSED:
       break
     if event == 'Submit':
       if values["Browse"] == "":
@@ -176,11 +174,11 @@ def outputToFile(sortedAccount, nameOfTheField):
 
 def createAskForOutputPathWindow():
   layout = [
-      [PySimpleGUI.Text("Choose the exit folder", size=(100, None), justification="center")],
-      [PySimpleGUI.In(), PySimpleGUI.FolderBrowse()],
-      [PySimpleGUI.Button("Submit")]
+      [sg.Text("Choose the exit folder", size=(100, None), justification="center")],
+      [sg.In(), sg.FolderBrowse()],
+      [sg.Button("Submit")]
   ]
-  window = PySimpleGUI.Window("Fileout choice", layout, size=(500, 100), element_justification='c', modal=True)
+  window = sg.Window("Fileout choice", layout, size=(500, 100), element_justification='c', modal=True)
   return window
 
 main()
