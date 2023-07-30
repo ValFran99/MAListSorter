@@ -2,6 +2,7 @@ import PySimpleGUI as sg
 import sort_by_field_mal as logicCode
 import time
 import winsound
+import os
 
 USERNAME_INPUT_WINDOW_TEXT = "Enter your username, your list needs to be public"
 
@@ -30,13 +31,22 @@ POSSIBLE_FIELDS = {
 
 MAL_DATASET_CSV = "MAL_dataset_Winter_2022.csv"
 
-COMBO_LIST = ["Members", "Scoring members", "Mean score", "Amount of episodes", "Studios", "Source material", "Start date/season", "Your score", "Alphabetically"]
+COMBO_LIST = ["Members", 
+              "Scoring members", 
+              "Mean score", 
+              "Amount of episodes", 
+              "Studios", 
+              "Source material", 
+              "Start date/season", 
+              "Your score", 
+              "Alphabetically"
+              ]
 
 def createMainWindow(username: str):
   layout = [
       [sg.Text("Select the desired field to sort")], 
       [sg.Combo(values=COMBO_LIST, auto_size_text=True, default_value="Members", readonly=True, key="-COMBO-"), sg.Button("Sort!")],
-      [sg.Multiline(autoscroll=True, size=(900, 600), auto_refresh=True, reroute_stdout=True)]
+      [sg.Multiline(autoscroll=True, size=(900, 600), auto_refresh=True, reroute_stdout=True, do_not_clear=False)]
   ]
 
   return sg.Window(f"Welcome {username}!", layout, size=(1000, 600))
@@ -58,13 +68,9 @@ def main():
     if event == "Sort!":
       sortBy = values["-COMBO-"]
       sortedList = logicCode.sortListBy(sortBy, animeList)
-      print(sortedList)
-    # desiredField, nameOfTheField = POSSIBLE_FIELDS[event]
-
-    # sortedAccount = logicCode.sortMalAccountByDesiredField(malAccountPath, MAL_DATASET_CSV, desiredField)
-    # logicCode.cutePrint(sortedAccount, nameOfTheField)
-    # askForFileOut(sortedAccount, nameOfTheField)
-    # print("Done!")
+      os.system("cls")
+      logicCode.printSortedList(sortBy, sortedList)
+      
   window.close()
 
 
@@ -95,11 +101,6 @@ def askForUserList():
       window.close()
     
       return username, animeList
-
-def checkIfThePathIsValid(path):
-  extension = path[len(path) - 3:]
-  return extension == "xml"
-
 
 def createAskForUserListWindow():
   layout = [

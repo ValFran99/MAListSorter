@@ -5,11 +5,22 @@ import sortingFunctions
 
 CRED_FILE = "credentials"
 
+SORT_BY_DATA = {
+  "Members": "num_list_users",
+  "Scoring members": "num_scoring_users",
+  "Mean score": "mean",
+  "Amount of episodes": "num_episodes",
+  "Source material": "source",
+  "Start date/season": "start_date"
+}
+
 def getClientID():
   with open(CRED_FILE, "r") as credFile:
     return credFile.readline()
 
 CLIENT_ID = getClientID()
+
+
 
 # Added a limit of 50 anime to test, needs to be removed after
 def getListFromUser(username: str):
@@ -27,121 +38,86 @@ def getListFromUser(username: str):
   return animeList
 
 def sortListBy(sortBy, animeList):
-  match sortBy:
+  if sortBy == "Studios":
+    return sortingFunctions.sortByStudios(animeList)
+  elif sortBy == "Your score":
+    return sortingFunctions.sortByUserScore(animeList)
+  elif sortBy == "Alphabetically":
+    return sortingFunctions.sortAlphabetically(animeList)
+  # Any other stuff
+  else:
+    return sortingFunctions.genericSorting(animeList, SORT_BY_DATA[sortBy])
+
+# COMBO_LIST = ["Members", 
+#               "Scoring members", 
+#               "Mean score", 
+#               "Amount of episodes", 
+#               "Studios", 
+#               "Source material", 
+#               "Start date/season", 
+#               "Your score", 
+#               "Alphabetically"
+#               ]
+
+def printSortedList(sortedBy, sortedList):
+  match sortedBy:
     case "Members":
-      sortingFunctions.sortByMembers(animeList)
+      i = 1
+      for entry in sortedList:
+        print(f'{i}. {entry["node"]["title"]}, {entry["node"]["num_list_users"]} users, with {entry["node"]["num_scoring_users"]} users that scored it')
+        i += 1
+        
     case "Scoring members":
-      sortingFunctions.sortByScoringMembers(animeList)
+      i = 1
+      for entry in sortedList:
+        print(f'{i}. {entry["node"]["title"]} was rated by {entry["node"]["num_scoring_users"]} users out of {entry["node"]["num_list_users"]} users')
+        i += 1
+        
     case "Mean score":
-      sortingFunctions.sortByMeanScore(animeList)
+      i = 1
+      for entry in sortedList:
+        print(f'{i}. {entry["node"]["title"]}, with a score of {entry["node"]["mean"]}')
+        i += 1
+        
     case "Amount of episodes":
-      sortingFunctions.sortByEpisodes(animeList)
+      i = 1
+      for entry in sortedList:
+        print(f'{i}. {entry["node"]["title"]}, with {entry["node"]["num_episodes"]} episodes')
+        i += 1
+        
     case "Studios":
-      sortingFunctions.sortByStudios(animeList)
+      i = 1
+      for entry in sortedList:
+        print(f'{i}. {entry["node"]["title"]} was made by ', end="")
+        for studio in entry["node"]["studios"]:
+          print(f'{studio["name"]}, ', end="")
+        print()
+        i += 1
+        
     case "Source material":
-      sortingFunctions.sortBySourceType(animeList)
+      i = 1
+      for entry in sortedList:
+        print(f'{i}. {entry["node"]["title"]} source is {entry["node"]["source"]}')
+        i += 1
+        
     case "Start date/season":
-      sortingFunctions.sortByStartDate(animeList)
+      i = 1
+      for entry in sortedList:
+        try:
+          seasonInfo = entry["node"]["start_season"]
+        except KeyError:
+          seasonInfo = {"year": "No info", "season": "No season"}
+        print(f'{i}. {entry["node"]["title"]} started in {entry["node"]["start_date"]}, in the {seasonInfo["season"]} of {seasonInfo["year"]}')
+        i += 1
     case "Your score":
-      sortingFunctions.sortByUserScore(animeList)
+      i = 1
+      for entry in sortedList:
+        print(f'{i}. {entry["node"]["title"]} | {entry["list_status"]["score"]}')
+        i += 1
+        
     case "Alphabetically":
-      sortingFunctions.sortAlphabetically(animeList)
-      
-  return None
-
-def createDictWithAnimesAndSelectedField(malCsvDataset, malAccountSet, desiredField):
-  titleAndField = {}
-
-  with open(malCsvDataset, "r", encoding="utf-8") as malDatasetFile:
-
-    malDatasetReader = csv.reader(malDatasetFile)
-    next(malDatasetReader, None)
-
-    for malEntry in malDatasetReader:
-
-      if malEntry == []:
-        continue
-
-      if desiredField == "anime title":
-        if malEntry[0] in malAccountSet:
-            titleAndField[malEntry[0]] = "anime title"
-        continue
-
-      malEntryTitle = malEntry[0]
-      malEntryField = malEntry[desiredField]
-
-      if malEntryTitle in malAccountSet:
-        titleAndField[malEntryTitle] = float(malEntryField)
-
-  return titleAndField
-
-
-def sortMalAccountByDesiredField(malAccount, malDatabase, desiredField):
-  accountToSet = malToSet(malAccount)
-  entriesWithSelectedField = createDictWithAnimesAndSelectedField(malDatabase, accountToSet, desiredField)
-  if desiredField == "anime title":
-    return sorted(entriesWithSelectedField.items(), key=lambda x: x[0])
-  return sorted(entriesWithSelectedField.items(), key=lambda x: x[1], reverse=True)
-
-
-def cutePrint(listOfTuples, nameOfTheField):
-  i = 0
-
-  for title, field in listOfTuples:
-    i += 1
-    if nameOfTheField == "anime title":
-      print(f"{i}. Title: {title}")
-      continue
-    print(f"{i}. Title: {title} | {nameOfTheField}: {field}")
-
-
-def writeOnFileTheOrderedList(listOfTuples, fileName, nameOfTheField):
-  with open(fileName, "w", encoding='utf-8') as file:
-    i = 0
-
-    for title, field in listOfTuples:
-      i += 1
-      if nameOfTheField == "anime title":
-        file.write(f"{i}. Title: {title}\n")
-        continue
-      file.write(f"{i}. Title: {title} | {nameOfTheField}: {field}\n")
-
-# Command line code
-
-def printTheMainScreen():
-  print()
-  print("Posibles campos a ingresar")
-  print("-Puntuacion global")
-  print("-Año de salida")
-  print("-Cantidad de episodios")
-  print("-Cantidad de miembros")
-
-  print()
-  print("Ingresa 'salir' para salir")
-  print()
-
-
-def main_for_command_line():
-  while True:
-
-    printTheMainScreen()
-    campoIngresado = input("Ingresá el campo deseado para ordenar tu mal: ").lower()
-
-    if campoIngresado == "salir":
-      break
-
-    try:
-      desiredField, nameOfTheField = POSIBLES_CAMPOS[campoIngresado]
-    except KeyError:
-      print("Otra vez")
-      continue
-
-    sortedAccount = sortMalAccountByDesiredField("myAnimeList.csv", "MAL_dataset_Spring_2021.csv", desiredField)
-    cutePrint(sortedAccount, nameOfTheField)
-    print("Querés exportarlo a un archivo .txt?")
-    exportChoice = input("Y/N: ").lower()
-
-    if exportChoice == "y":
-      writeOnFileTheOrderedList(sortedAccount, "accountOrderedBy" + nameOfTheField + ".txt", nameOfTheField)
-      print("Done!")
-      print()
+      i = 1
+      for entry in sortedList:
+        print(f'{i}. {entry["node"]["title"]}')
+        i += 1
+        
