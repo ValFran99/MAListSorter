@@ -1,5 +1,3 @@
-import csv
-import xml.etree.ElementTree as ET
 import requests
 import sortingFunctions
 
@@ -20,8 +18,6 @@ def getClientID():
 
 CLIENT_ID = getClientID()
 
-
-
 # Added a limit of 50 anime to test, needs to be removed after
 def getListFromUser(username: str):
   url = f'https://api.myanimelist.net/v2/users/{username}/animelist?status=completed&limit=50&fields=id,title,mean,popularity,num_list_users,num_scoring_users,list_status,start_season,start_date,end_date,nsfw,num_episodes,source,studios'
@@ -37,6 +33,7 @@ def getListFromUser(username: str):
   
   return animeList
 
+
 def sortListBy(sortBy, animeList):
   if sortBy == "Studios":
     return sortingFunctions.sortByStudios(animeList)
@@ -48,16 +45,6 @@ def sortListBy(sortBy, animeList):
   else:
     return sortingFunctions.genericSorting(animeList, SORT_BY_DATA[sortBy])
 
-# COMBO_LIST = ["Members", 
-#               "Scoring members", 
-#               "Mean score", 
-#               "Amount of episodes", 
-#               "Studios", 
-#               "Source material", 
-#               "Start date/season", 
-#               "Your score", 
-#               "Alphabetically"
-#               ]
 
 def printSortedList(sortedBy, sortedList):
   match sortedBy:

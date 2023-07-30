@@ -6,31 +6,6 @@ import os
 
 USERNAME_INPUT_WINDOW_TEXT = "Enter your username, your list needs to be public"
 
-RELEASE_YEAR = 5
-
-
-
-AMOUNT_OF_EPISODES = 8
-SCORE = 9
-AMOUNT_OF_MEMBERS = 10
-ANIME_TITLES = "anime title"
-
-SCORE_FIELD_NAME = "global score"
-MEMBERS_FIELD_NAME = "amount of members"
-EPISODES_FIELD_NAME = "amount of episodes"
-RELEASE_YEAR_FIELD_NAME = "release year"
-ANIME_TITLES_FIELD_NAME = "anime title"
-
-POSSIBLE_FIELDS = {
-    "Sort by global score": (SCORE, SCORE_FIELD_NAME),
-    "Sort by members": (AMOUNT_OF_MEMBERS, MEMBERS_FIELD_NAME),
-    "Sort by amount of episodes": (AMOUNT_OF_EPISODES, EPISODES_FIELD_NAME),
-    "Sort by release year": (RELEASE_YEAR, RELEASE_YEAR_FIELD_NAME),
-    "Sort anime titles alphabetically": (ANIME_TITLES, ANIME_TITLES_FIELD_NAME)
-}
-
-MAL_DATASET_CSV = "MAL_dataset_Winter_2022.csv"
-
 COMBO_LIST = ["Members", 
               "Scoring members", 
               "Mean score", 
@@ -57,8 +32,7 @@ def main():
   username, animeList = askForUserList()
   if(username == None):
     return
-  # print(animeList)
-  # print(username)
+
   window = createMainWindow(username)
 
   while True:
