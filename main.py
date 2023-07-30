@@ -1,18 +1,5 @@
-# Permite ordenar una lista exportada de MyAnimeList en formato xml en base a:
-# - Cantidad aproximada de cuentas de usuarios que contiene el título
-# - La puntuación promedio del título (un promedio de la puntuación dada por distintos usuarios)
-# - Por la cantidad de episodios
-# - Por el año de emisión
-# - Alfabéticamente
-
-# Hecho para practicar xml/json y algo de interfaz gráfica
-
-# Dataset actualizado a la temporada de invierno de 2022 y generado usando:
-# https://github.com/Gumpy-Q/MALscrap-suite
-
-
 import PySimpleGUI as sg
-import sort_by_field_mal as logic_code
+import sort_by_field_mal as logicCode
 import time
 import winsound
 
@@ -43,13 +30,12 @@ POSSIBLE_FIELDS = {
 
 MAL_DATASET_CSV = "MAL_dataset_Winter_2022.csv"
 
+COMBO_LIST = ["Members", "Scoring members", "Mean score", "Amount of episodes", "Studios", "Source material", "Start date/season", "Your score", "Alphabetically"]
+
 def createMainWindow(username: str):
   layout = [
-      [sg.Text("Select the desired field to sort")],
-      [sg.Button("Sort by members"), sg.Button("Sort by global score"),
-        sg.Button("Sort by amount of episodes"), sg.Button("Sort by release year"),
-        sg.Button("Sort anime titles alphabetically")
-        ],
+      [sg.Text("Select the desired field to sort")], 
+      [sg.Combo(values=COMBO_LIST, auto_size_text=True, default_value="Members", readonly=True, key="-COMBO-"), sg.Button("Sort!")],
       [sg.Multiline(autoscroll=True, size=(900, 600), auto_refresh=True, reroute_stdout=True)]
   ]
 
@@ -61,21 +47,24 @@ def main():
   username, animeList = askForUserList()
   if(username == None):
     return
-  print(animeList)
-  print(username)
+  # print(animeList)
+  # print(username)
   window = createMainWindow(username)
 
   while True:
     event, values = window.read()
     if event == sg.WIN_CLOSED:
       break
-    
-    desiredField, nameOfTheField = POSSIBLE_FIELDS[event]
+    if event == "Sort!":
+      sortBy = values["-COMBO-"]
+      sortedList = logicCode.sortListBy(sortBy, animeList)
+      print(sortedList)
+    # desiredField, nameOfTheField = POSSIBLE_FIELDS[event]
 
-    sortedAccount = logic_code.sortMalAccountByDesiredField(malAccountPath, MAL_DATASET_CSV, desiredField)
-    logic_code.cutePrint(sortedAccount, nameOfTheField)
-    askForFileOut(sortedAccount, nameOfTheField)
-    print("Done!")
+    # sortedAccount = logicCode.sortMalAccountByDesiredField(malAccountPath, MAL_DATASET_CSV, desiredField)
+    # logicCode.cutePrint(sortedAccount, nameOfTheField)
+    # askForFileOut(sortedAccount, nameOfTheField)
+    # print("Done!")
   window.close()
 
 
@@ -94,7 +83,7 @@ def askForUserList():
       
       window["userWindowText"].update(value="Loading your list...")
       window.refresh()
-      animeList = logic_code.getListFromUser(username)
+      animeList = logicCode.getListFromUser(username)
       window["userWindowText"].update(value=USERNAME_INPUT_WINDOW_TEXT)
       window.refresh()
       
@@ -168,7 +157,7 @@ def outputToFile(sortedAccount, nameOfTheField):
   if fileExitPath == None:
     return False
   completeExitPath = fileExitPath + "/Account ordered by " + nameOfTheField + ".txt"
-  logic_code.writeOnFileTheOrderedList(sortedAccount, completeExitPath, nameOfTheField)
+  logicCode.writeOnFileTheOrderedList(sortedAccount, completeExitPath, nameOfTheField)
   return True
 
 

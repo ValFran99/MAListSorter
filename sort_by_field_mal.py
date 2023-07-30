@@ -1,6 +1,7 @@
 import csv
 import xml.etree.ElementTree as ET
 import requests
+import sortingFunctions
 
 CRED_FILE = "credentials"
 
@@ -10,9 +11,9 @@ def getClientID():
 
 CLIENT_ID = getClientID()
 
-# Added a limit of 50 anime to tests, needs to be removed after
+# Added a limit of 50 anime to test, needs to be removed after
 def getListFromUser(username: str):
-  url = f'https://api.myanimelist.net/v2/users/{username}/animelist?status=completed&limit=50&fields=id,title,mean,popularity,num_list_users,num_scoring_users,list_status,start_season'
+  url = f'https://api.myanimelist.net/v2/users/{username}/animelist?status=completed&limit=50&fields=id,title,mean,popularity,num_list_users,num_scoring_users,list_status,start_season,start_date,end_date,nsfw,num_episodes,source,studios'
   response = requests.get(url, headers={
     'X-MAL-CLIENT-ID': CLIENT_ID
   })
@@ -25,6 +26,28 @@ def getListFromUser(username: str):
   
   return animeList
 
+def sortListBy(sortBy, animeList):
+  match sortBy:
+    case "Members":
+      sortingFunctions.sortByMembers(animeList)
+    case "Scoring members":
+      sortingFunctions.sortByScoringMembers(animeList)
+    case "Mean score":
+      sortingFunctions.sortByMeanScore(animeList)
+    case "Amount of episodes":
+      sortingFunctions.sortByEpisodes(animeList)
+    case "Studios":
+      sortingFunctions.sortByStudios(animeList)
+    case "Source material":
+      sortingFunctions.sortBySourceType(animeList)
+    case "Start date/season":
+      sortingFunctions.sortByStartDate(animeList)
+    case "Your score":
+      sortingFunctions.sortByUserScore(animeList)
+    case "Alphabetically":
+      sortingFunctions.sortAlphabetically(animeList)
+      
+  return None
 
 def createDictWithAnimesAndSelectedField(malCsvDataset, malAccountSet, desiredField):
   titleAndField = {}
