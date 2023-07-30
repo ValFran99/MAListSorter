@@ -1,5 +1,5 @@
 import PySimpleGUI as sg
-import sort_by_field_mal as logicCode
+import logicCode
 import time
 import winsound
 import os
