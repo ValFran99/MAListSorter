@@ -50,7 +50,7 @@ def printSortedList(sortedBy, sortedList):
     case "Members":
       i = 1
       for entry in sortedList:
-        print(f'{i}. {entry["node"]["title"]}, {entry["node"]["num_list_users"]} users, with {entry["node"]["num_scoring_users"]} users that scored it')
+        print(f'{i}. {entry["node"]["title"]} has {entry["node"]["num_list_users"]} users and {entry["node"]["num_scoring_users"]} of them gave it a score')
         i += 1
         
     case "Scoring members":
@@ -107,3 +107,69 @@ def printSortedList(sortedBy, sortedList):
         print(f'{i}. {entry["node"]["title"]}')
         i += 1
         
+
+def writeSortedListOnFile(filePath, sortedBy, sortedList):
+  with open(filePath, "w", encoding="utf-8") as outputFile:
+    
+    match sortedBy:
+      case "Members":
+        i = 1
+        for entry in sortedList:
+          outputFile.write(f'{i}. {entry["node"]["title"]} has {entry["node"]["num_list_users"]} users and {entry["node"]["num_scoring_users"]} of them gave it a score\n')
+          i += 1
+          
+      case "Scoring members":
+        i = 1
+        for entry in sortedList:
+          outputFile.write(f'{i}. {entry["node"]["title"]} was rated by {entry["node"]["num_scoring_users"]} users out of {entry["node"]["num_list_users"]} users\n')
+          i += 1
+          
+      case "Mean score":
+        i = 1
+        for entry in sortedList:
+          outputFile.write(f'{i}. {entry["node"]["title"]}, with a score of {entry["node"]["mean"]}\n')
+          i += 1
+          
+      case "Amount of episodes":
+        i = 1
+        for entry in sortedList:
+          outputFile.write(f'{i}. {entry["node"]["title"]}, with {entry["node"]["num_episodes"]} episodes\n')
+          i += 1
+          
+      case "Studios":
+        i = 1
+        for entry in sortedList:
+          outputFile.write(f'{i}. {entry["node"]["title"]} was made by ')
+          for studio in entry["node"]["studios"]:
+            outputFile.write(f'{studio["name"]}, ',)
+          outputFile.write('\n')
+          i += 1
+          
+      case "Source material":
+        i = 1
+        for entry in sortedList:
+          outputFile.write(f'{i}. {entry["node"]["title"]} source is {entry["node"]["source"]}\n')
+          i += 1
+          
+      case "Start date/season":
+        i = 1
+        for entry in sortedList:
+          try:
+            seasonInfo = entry["node"]["start_season"]
+          except KeyError:
+            seasonInfo = {"year": "No info", "season": "No season"}
+          outputFile.write(f'{i}. {entry["node"]["title"]} started in {entry["node"]["start_date"]}, in the {seasonInfo["season"]} of {seasonInfo["year"]}\n')
+          i += 1
+          
+      case "Your score":
+        i = 1
+        for entry in sortedList:
+          outputFile.write(f'{i}. {entry["node"]["title"]} | {entry["list_status"]["score"]}\n')
+          i += 1
+          
+      case "Alphabetically":
+        i = 1
+        for entry in sortedList:
+          outputFile.write(f'{i}. {entry["node"]["title"]}\n')
+          i += 1
+    return

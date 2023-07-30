@@ -44,6 +44,7 @@ def main():
       sortedList = logicCode.sortListBy(sortBy, animeList)
       os.system("cls")
       logicCode.printSortedList(sortBy, sortedList)
+      askForFileOut(sortBy, sortedList)
       
   window.close()
 
@@ -86,7 +87,9 @@ def createAskForUserListWindow():
   window["usernameInput"].bind("<Return>", "_Enter")
   return window
   
-def askForFileOut(sortedAccount, nameOfTheField):
+  
+
+def askForFileOut(sortedBy, sortedList):
   layout = [
       [sg.Text("Fileout to a text file?", size=(100, None), justification="center")],
       [sg.Button("Yes"), sg.Button("No")]
@@ -99,11 +102,12 @@ def askForFileOut(sortedAccount, nameOfTheField):
     if event == sg.WIN_CLOSED:
       break
     if event == "Yes":
-      if not outputToFile(sortedAccount, nameOfTheField):
+      if not outputToFile(sortedBy, sortedList):
         window.close()
         return
       print("Saving")
       time.sleep(0.5)
+      print("Done!")
     window.close()
 
 
@@ -126,13 +130,23 @@ def askForOutputPath():
 
   return path
 
+FIELD_FOR_FILE_NAME = {
+  "Members": "Members",
+  "Scoring members": "ScoringMembers",
+  "Mean score": "MeanScore",
+  "Amount of episodes": "NumOfEpisodes",
+  "Source material": "SourceMaterial",
+  "Start date/season": "StartDate",
+  "Alphabetically": "Alphabetically",
+  "Studio": "Studio"
+}
 
-def outputToFile(sortedAccount, nameOfTheField):
+def outputToFile(sortedBy, sortedList):
   fileExitPath = askForOutputPath()
   if fileExitPath == None:
     return False
-  completeExitPath = fileExitPath + "/Account ordered by " + nameOfTheField + ".txt"
-  logicCode.writeOnFileTheOrderedList(sortedAccount, completeExitPath, nameOfTheField)
+  completeExitPath = fileExitPath + "/SortedBy" + FIELD_FOR_FILE_NAME[sortedBy] + ".txt"
+  logicCode.writeSortedListOnFile(completeExitPath, sortedBy, sortedList)
   return True
 
 
