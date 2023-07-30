@@ -9,7 +9,8 @@ SORT_BY_DATA = {
   "Mean score": "mean",
   "Amount of episodes": "num_episodes",
   "Source material": "source",
-  "Start date/season": "start_date"
+  "Start date/season": "start_date",
+  "Alphabetically": "Alphabetically"
 }
 
 def getClientID():
@@ -39,8 +40,6 @@ def sortListBy(sortBy, animeList):
     return sortingFunctions.sortByStudios(animeList)
   elif sortBy == "Your score":
     return sortingFunctions.sortByUserScore(animeList)
-  elif sortBy == "Alphabetically":
-    return sortingFunctions.sortAlphabetically(animeList)
   # Any other stuff
   else:
     return sortingFunctions.genericSorting(animeList, SORT_BY_DATA[sortBy])

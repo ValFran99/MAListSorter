@@ -15,8 +15,7 @@ def sortByUserScore(animeList):
   sortedByUserScore = sorted(animeList["data"], key=lambda x: x["list_status"]["score"], reverse=True)
   return sortedByUserScore
       
-def sortAlphabetically(animeList):
-  return animeList["data"]
-      
 def genericSorting(animeList, sortBy):
+  if sortBy == "Alphabetically":
+    return animeList["data"]
   return sorted(animeList["data"], key=lambda x: x["node"][sortBy], reverse=True)
