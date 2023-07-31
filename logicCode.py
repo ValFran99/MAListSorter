@@ -1,5 +1,6 @@
 import requests
 import sortingFunctions
+import os
 
 CRED_FILE = "credentials"
 
@@ -69,6 +70,7 @@ def sortListBy(sortBy, animeList):
 
 
 def printSortedList(sortedBy, sortedList):
+  os.system("cls")
   match sortedBy:
     case Fields.MEMBERS:
       i = 1

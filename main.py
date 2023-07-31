@@ -2,9 +2,8 @@ import PySimpleGUI as sg
 import logicCode
 import time
 import winsound
-import os
 
-USERNAME_INPUT_WINDOW_TEXT = "Enter your username, your list needs to be public"
+USERNAME_INPUT_WINDOW_TEXT = "Enter your MyAnimeList username, your list needs to be public"
 
 COMBO_LIST = ["Members", 
               "Scoring members", 
@@ -20,7 +19,7 @@ COMBO_LIST = ["Members",
 def createMainWindow(username: str):
   layout = [
       [sg.Text("Select the desired field to sort")], 
-      [sg.Combo(values=COMBO_LIST, auto_size_text=True, default_value=COMBO_LIST[0], readonly=True, key="-COMBO-"), sg.Button("Sort!")],
+      [sg.Combo(values=COMBO_LIST, auto_size_text=True, default_value=COMBO_LIST[0], readonly=True, key="-COMBO-"), sg.Button("Sort!"), sg.Button(u"\U0001F4BE" + "  Save on file", auto_size_button=True, key="Save")],
       [sg.Multiline(autoscroll=True, size=(900, 600), auto_refresh=True, reroute_stdout=True, do_not_clear=False)]
   ]
 
@@ -34,6 +33,7 @@ def main():
     return
 
   window = createMainWindow(username)
+  sortBy = None
 
   while True:
     event, values = window.read()
@@ -42,9 +42,13 @@ def main():
     if event == "Sort!":
       sortBy = values["-COMBO-"]
       sortedList = logicCode.sortListBy(sortBy, animeList)
-      os.system("cls")
       logicCode.printSortedList(sortBy, sortedList)
-      askForFileOut(sortBy, sortedList)
+    if event == "Save":
+      if not sortBy:
+        continue
+      saveOnFile(sortBy, sortedList)
+      logicCode.printSortedList(sortBy, sortedList)
+      None
       
   window.close()
 
@@ -86,31 +90,10 @@ def createAskForUserListWindow():
                               element_justification='c', finalize=True, return_keyboard_events=True)
   window["usernameInput"].bind("<Return>", "_Enter")
   return window
-  
-  
 
-def askForFileOut(sortedBy, sortedList):
-  layout = [
-      [sg.Text("Fileout to a text file?", size=(100, None), justification="center")],
-      [sg.Button("Yes"), sg.Button("No")]
-  ]
-  window = sg.Window("Fileout choice", layout, size=(250, 80), element_justification='c', modal=True)
-
-  while True:
-    event, values = window.read()
-
-    if event == sg.WIN_CLOSED:
-      break
-    if event == "Yes":
-      if not outputToFile(sortedBy, sortedList):
-        window.close()
-        return
-      print("Saving")
-      window.close()
-      time.sleep(0.5)
-      print("Done!")
-    window.close()
-
+def saveOnFile(sortedBy, sortedList):
+  if not outputToFile(sortedBy, sortedList):
+    return
 
 def askForOutputPath():
 
@@ -139,7 +122,7 @@ FIELD_FOR_FILE_NAME = {
   "Source material": "SourceMaterial",
   "Start date/season": "StartDate",
   "Alphabetically": "Alphabetically",
-  "Studio": "Studio"
+  "Studios": "Studios"
 }
 
 def outputToFile(sortedBy, sortedList):
