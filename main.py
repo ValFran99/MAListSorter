@@ -20,7 +20,7 @@ COMBO_LIST = ["Members",
 def createMainWindow(username: str):
   layout = [
       [sg.Text("Select the desired field to sort")], 
-      [sg.Combo(values=COMBO_LIST, auto_size_text=True, default_value="Members", readonly=True, key="-COMBO-"), sg.Button("Sort!")],
+      [sg.Combo(values=COMBO_LIST, auto_size_text=True, default_value=COMBO_LIST[0], readonly=True, key="-COMBO-"), sg.Button("Sort!")],
       [sg.Multiline(autoscroll=True, size=(900, 600), auto_refresh=True, reroute_stdout=True, do_not_clear=False)]
   ]
 
@@ -106,6 +106,7 @@ def askForFileOut(sortedBy, sortedList):
         window.close()
         return
       print("Saving")
+      window.close()
       time.sleep(0.5)
       print("Done!")
     window.close()

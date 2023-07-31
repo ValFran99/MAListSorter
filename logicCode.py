@@ -13,6 +13,29 @@ SORT_BY_DATA = {
   "Alphabetically": "Alphabetically"
 }
 
+# SORTING_FIELDS = [
+#   "Members", 
+#   "Scoring members",
+#   "Mean score",
+#   "Amount of episodes",
+#   "Studios",
+#   "Source material",
+#   "Start date/season",
+#   "Your score",
+#   "Alphabetically"
+#   ]
+
+class Fields:
+  MEMBERS = "Members"
+  SCORING_MEMBERS = "Scoring members"
+  MEAN = "Mean score"
+  EPISODES = "Amount of episodes"
+  STUDIOS = "Studios"
+  SOURCE = "Source material"
+  SEASON = "Start date/season"
+  SCORE = "Your score"
+  ALPHA = "Alphabetically"
+
 def getClientID():
   with open(CRED_FILE, "r") as credFile:
     return credFile.readline()
@@ -21,7 +44,7 @@ CLIENT_ID = getClientID()
 
 # Added a limit of 50 anime to test, needs to be removed after
 def getListFromUser(username: str):
-  url = f'https://api.myanimelist.net/v2/users/{username}/animelist?status=completed&limit=50&fields=id,title,mean,popularity,num_list_users,num_scoring_users,list_status,start_season,start_date,end_date,nsfw,num_episodes,source,studios'
+  url = f'https://api.myanimelist.net/v2/users/{username}/animelist?status=completed&limit=1000&fields=id,title,mean,popularity,num_list_users,num_scoring_users,list_status,start_season,start_date,end_date,nsfw,num_episodes,source,studios'
   response = requests.get(url, headers={
     'X-MAL-CLIENT-ID': CLIENT_ID
   })
@@ -47,31 +70,31 @@ def sortListBy(sortBy, animeList):
 
 def printSortedList(sortedBy, sortedList):
   match sortedBy:
-    case "Members":
+    case Fields.MEMBERS:
       i = 1
       for entry in sortedList:
         print(f'{i}. {entry["node"]["title"]} has {entry["node"]["num_list_users"]} users and {entry["node"]["num_scoring_users"]} of them gave it a score')
         i += 1
         
-    case "Scoring members":
+    case Fields.SCORING_MEMBERS:
       i = 1
       for entry in sortedList:
         print(f'{i}. {entry["node"]["title"]} was rated by {entry["node"]["num_scoring_users"]} users out of {entry["node"]["num_list_users"]} users')
         i += 1
         
-    case "Mean score":
+    case Fields.MEAN:
       i = 1
       for entry in sortedList:
         print(f'{i}. {entry["node"]["title"]}, with a score of {entry["node"]["mean"]}')
         i += 1
         
-    case "Amount of episodes":
+    case Fields.EPISODES:
       i = 1
       for entry in sortedList:
         print(f'{i}. {entry["node"]["title"]}, with {entry["node"]["num_episodes"]} episodes')
         i += 1
         
-    case "Studios":
+    case Fields.STUDIOS:
       i = 1
       for entry in sortedList:
         print(f'{i}. {entry["node"]["title"]} was made by ', end="")
@@ -80,13 +103,13 @@ def printSortedList(sortedBy, sortedList):
         print()
         i += 1
         
-    case "Source material":
+    case Fields.SOURCE:
       i = 1
       for entry in sortedList:
         print(f'{i}. {entry["node"]["title"]} source is {entry["node"]["source"]}')
         i += 1
         
-    case "Start date/season":
+    case Fields.SEASON:
       i = 1
       for entry in sortedList:
         try:
@@ -95,13 +118,14 @@ def printSortedList(sortedBy, sortedList):
           seasonInfo = {"year": "No info", "season": "No season"}
         print(f'{i}. {entry["node"]["title"]} started in {entry["node"]["start_date"]}, in the {seasonInfo["season"]} of {seasonInfo["year"]}')
         i += 1
-    case "Your score":
+        
+    case Fields.SCORE:
       i = 1
       for entry in sortedList:
         print(f'{i}. {entry["node"]["title"]} | {entry["list_status"]["score"]}')
         i += 1
         
-    case "Alphabetically":
+    case Fields.ALPHA:
       i = 1
       for entry in sortedList:
         print(f'{i}. {entry["node"]["title"]}')
@@ -112,31 +136,31 @@ def writeSortedListOnFile(filePath, sortedBy, sortedList):
   with open(filePath, "w", encoding="utf-8") as outputFile:
     
     match sortedBy:
-      case "Members":
+      case Fields.MEMBERS:
         i = 1
         for entry in sortedList:
           outputFile.write(f'{i}. {entry["node"]["title"]} has {entry["node"]["num_list_users"]} users and {entry["node"]["num_scoring_users"]} of them gave it a score\n')
           i += 1
           
-      case "Scoring members":
+      case Fields.SCORING_MEMBERS:
         i = 1
         for entry in sortedList:
           outputFile.write(f'{i}. {entry["node"]["title"]} was rated by {entry["node"]["num_scoring_users"]} users out of {entry["node"]["num_list_users"]} users\n')
           i += 1
           
-      case "Mean score":
+      case Fields.MEAN:
         i = 1
         for entry in sortedList:
           outputFile.write(f'{i}. {entry["node"]["title"]}, with a score of {entry["node"]["mean"]}\n')
           i += 1
           
-      case "Amount of episodes":
+      case Fields.EPISODES:
         i = 1
         for entry in sortedList:
           outputFile.write(f'{i}. {entry["node"]["title"]}, with {entry["node"]["num_episodes"]} episodes\n')
           i += 1
           
-      case "Studios":
+      case Fields.STUDIOS:
         i = 1
         for entry in sortedList:
           outputFile.write(f'{i}. {entry["node"]["title"]} was made by ')
@@ -145,13 +169,13 @@ def writeSortedListOnFile(filePath, sortedBy, sortedList):
           outputFile.write('\n')
           i += 1
           
-      case "Source material":
+      case Fields.SOURCE:
         i = 1
         for entry in sortedList:
           outputFile.write(f'{i}. {entry["node"]["title"]} source is {entry["node"]["source"]}\n')
           i += 1
           
-      case "Start date/season":
+      case Fields.SEASON:
         i = 1
         for entry in sortedList:
           try:
@@ -161,13 +185,13 @@ def writeSortedListOnFile(filePath, sortedBy, sortedList):
           outputFile.write(f'{i}. {entry["node"]["title"]} started in {entry["node"]["start_date"]}, in the {seasonInfo["season"]} of {seasonInfo["year"]}\n')
           i += 1
           
-      case "Your score":
+      case Fields.SCORE:
         i = 1
         for entry in sortedList:
           outputFile.write(f'{i}. {entry["node"]["title"]} | {entry["list_status"]["score"]}\n')
           i += 1
           
-      case "Alphabetically":
+      case Fields.ALPHA:
         i = 1
         for entry in sortedList:
           outputFile.write(f'{i}. {entry["node"]["title"]}\n')

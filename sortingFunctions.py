@@ -1,13 +1,13 @@
 def sortByStudios(animeList):
   
   cleanedStudiosList = cleanStudioList(animeList["data"])
-
   sortedByStudios = sorted(cleanedStudiosList, key=lambda x: x["node"]["studios"][0]["id"])
   return sortedByStudios
 
 def cleanStudioList(animeList):
   for animeObject in animeList:
-    animeObject["node"]["studios"] = animeObject["node"].get("studios", [{"id": -1, "studio": "No studio"}])
+    if not animeObject["node"]["studios"]:
+      animeObject["node"]["studios"] = [{"id": -1, "name": "No studio"}]
       
   return animeList
       
