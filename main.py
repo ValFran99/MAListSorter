@@ -1,6 +1,5 @@
 import PySimpleGUI as sg
 import logicCode
-import time
 import winsound
 
 USERNAME_INPUT_WINDOW_TEXT = "Enter your MyAnimeList username, your list needs to be public"
@@ -20,7 +19,7 @@ def createMainWindow(username: str):
   layout = [
       [sg.Text("Select the desired field to sort")], 
       [sg.Combo(values=COMBO_LIST, auto_size_text=True, default_value=COMBO_LIST[0], readonly=True, key="-COMBO-"), sg.Button("Sort!"), sg.Button(u"\U0001F4BE" + "  Save on file", auto_size_button=True, key="Save")],
-      [sg.Multiline(autoscroll=True, size=(900, 600), auto_refresh=True, reroute_stdout=True, do_not_clear=False)]
+      [sg.Multiline(autoscroll=False, size=(900, 600), auto_refresh=True, reroute_stdout=True, do_not_clear=False)]
   ]
 
   return sg.Window(f"Welcome {username}!", layout, size=(1000, 600))
@@ -91,7 +90,7 @@ def createAskForUserListWindow():
   window["usernameInput"].bind("<Return>", "_Enter")
   return window
 
-def saveOnFile(sortedBy, sortedList):
+def saveOnFile(sortedBy: str, sortedList: list):
   if not outputToFile(sortedBy, sortedList):
     return
 
@@ -125,7 +124,7 @@ FIELD_FOR_FILE_NAME = {
   "Studios": "Studios"
 }
 
-def outputToFile(sortedBy, sortedList):
+def outputToFile(sortedBy: str, sortedList: list):
   fileExitPath = askForOutputPath()
   if fileExitPath == None:
     return False

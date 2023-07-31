@@ -45,7 +45,7 @@ CLIENT_ID = getClientID()
 
 # Added a limit of 50 anime to test, needs to be removed after
 def getListFromUser(username: str):
-  url = f'https://api.myanimelist.net/v2/users/{username}/animelist?status=completed&limit=1000&fields=id,title,mean,popularity,num_list_users,num_scoring_users,list_status,start_season,start_date,end_date,nsfw,num_episodes,source,studios'
+  url = f'https://api.myanimelist.net/v2/users/{username}/animelist?status=completed&limit=1000&fields=id,title,mean,popularity,num_list_users,num_scoring_users,list_status,start_season,start_date,end_date,nsfw,num_episodes,source,studios,media_type'
   response = requests.get(url, headers={
     'X-MAL-CLIENT-ID': CLIENT_ID
   })
@@ -59,7 +59,7 @@ def getListFromUser(username: str):
   return animeList
 
 
-def sortListBy(sortBy, animeList):
+def sortListBy(sortBy: str, animeList: dict):
   if sortBy == "Studios":
     return sortingFunctions.sortByStudios(animeList)
   elif sortBy == "Your score":
@@ -69,31 +69,31 @@ def sortListBy(sortBy, animeList):
     return sortingFunctions.genericSorting(animeList, SORT_BY_DATA[sortBy])
 
 
-def printSortedList(sortedBy, sortedList):
+def printSortedList(sortedBy: str, sortedList: list):
   os.system("cls")
   match sortedBy:
     case Fields.MEMBERS:
       i = 1
       for entry in sortedList:
-        print(f'{i}. {entry["node"]["title"]} has {entry["node"]["num_list_users"]} users and {entry["node"]["num_scoring_users"]} of them gave it a score')
+        print(f'{i}. {entry["node"]["title"]} has {entry["node"]["num_list_users"]} users and {entry["node"]["num_scoring_users"]} of them gave it a score | Type: {entry["node"]["media_type"].upper()}')
         i += 1
         
     case Fields.SCORING_MEMBERS:
       i = 1
       for entry in sortedList:
-        print(f'{i}. {entry["node"]["title"]} was rated by {entry["node"]["num_scoring_users"]} users out of {entry["node"]["num_list_users"]} users')
+        print(f'{i}. {entry["node"]["title"]} was rated by {entry["node"]["num_scoring_users"]} users out of {entry["node"]["num_list_users"]} users | Type: {entry["node"]["media_type"].upper()}')
         i += 1
         
     case Fields.MEAN:
       i = 1
       for entry in sortedList:
-        print(f'{i}. {entry["node"]["title"]}, with a score of {entry["node"]["mean"]}')
+        print(f'{i}. {entry["node"]["title"]}, with a score of {entry["node"]["mean"]} | Type: {entry["node"]["media_type"].upper()}')
         i += 1
         
     case Fields.EPISODES:
       i = 1
       for entry in sortedList:
-        print(f'{i}. {entry["node"]["title"]}, with {entry["node"]["num_episodes"]} episodes')
+        print(f'{i}. {entry["node"]["title"]}, with {entry["node"]["num_episodes"]} episodes | Type: {entry["node"]["media_type"].upper()}')
         i += 1
         
     case Fields.STUDIOS:
@@ -102,13 +102,13 @@ def printSortedList(sortedBy, sortedList):
         print(f'{i}. {entry["node"]["title"]} was made by ', end="")
         for studio in entry["node"]["studios"]:
           print(f'{studio["name"]}, ', end="")
-        print()
+        print(f'| Type: {entry["node"]["media_type"].upper()}')
         i += 1
         
     case Fields.SOURCE:
       i = 1
       for entry in sortedList:
-        print(f'{i}. {entry["node"]["title"]} source is {entry["node"]["source"]}')
+        print(f'{i}. {entry["node"]["title"]} source is {entry["node"]["source"]} | Type: {entry["node"]["media_type"].upper()}')
         i += 1
         
     case Fields.SEASON:
@@ -118,48 +118,48 @@ def printSortedList(sortedBy, sortedList):
           seasonInfo = entry["node"]["start_season"]
         except KeyError:
           seasonInfo = {"year": "No info", "season": "No season"}
-        print(f'{i}. {entry["node"]["title"]} started in {entry["node"]["start_date"]}, in the {seasonInfo["season"]} of {seasonInfo["year"]}')
+        print(f'{i}. {entry["node"]["title"]} started in {entry["node"]["start_date"]}, in the {seasonInfo["season"]} of {seasonInfo["year"]} | Type: {entry["node"]["media_type"].upper()}')
         i += 1
         
     case Fields.SCORE:
       i = 1
       for entry in sortedList:
-        print(f'{i}. {entry["node"]["title"]} | {entry["list_status"]["score"]}')
+        print(f'{i}. {entry["node"]["title"]} | {entry["list_status"]["score"]} | Type: {entry["node"]["media_type"].upper()}')
         i += 1
         
     case Fields.ALPHA:
       i = 1
       for entry in sortedList:
-        print(f'{i}. {entry["node"]["title"]}')
+        print(f'{i}. {entry["node"]["title"]} | Type: {entry["node"]["media_type"].upper()}')
         i += 1
         
 
-def writeSortedListOnFile(filePath, sortedBy, sortedList):
+def writeSortedListOnFile(filePath: str, sortedBy: str, sortedList: list):
   with open(filePath, "w", encoding="utf-8") as outputFile:
     
     match sortedBy:
       case Fields.MEMBERS:
         i = 1
         for entry in sortedList:
-          outputFile.write(f'{i}. {entry["node"]["title"]} has {entry["node"]["num_list_users"]} users and {entry["node"]["num_scoring_users"]} of them gave it a score\n')
+          outputFile.write(f'{i}. {entry["node"]["title"]} has {entry["node"]["num_list_users"]} users and {entry["node"]["num_scoring_users"]} of them gave it a score | Type: {entry["node"]["media_type"].upper()}\n')
           i += 1
           
       case Fields.SCORING_MEMBERS:
         i = 1
         for entry in sortedList:
-          outputFile.write(f'{i}. {entry["node"]["title"]} was rated by {entry["node"]["num_scoring_users"]} users out of {entry["node"]["num_list_users"]} users\n')
+          outputFile.write(f'{i}. {entry["node"]["title"]} was rated by {entry["node"]["num_scoring_users"]} users out of {entry["node"]["num_list_users"]} users | Type: {entry["node"]["media_type"].upper()}\n')
           i += 1
           
       case Fields.MEAN:
         i = 1
         for entry in sortedList:
-          outputFile.write(f'{i}. {entry["node"]["title"]}, with a score of {entry["node"]["mean"]}\n')
+          outputFile.write(f'{i}. {entry["node"]["title"]}, with a score of {entry["node"]["mean"]} | Type: {entry["node"]["media_type"].upper()}\n')
           i += 1
           
       case Fields.EPISODES:
         i = 1
         for entry in sortedList:
-          outputFile.write(f'{i}. {entry["node"]["title"]}, with {entry["node"]["num_episodes"]} episodes\n')
+          outputFile.write(f'{i}. {entry["node"]["title"]}, with {entry["node"]["num_episodes"]} episodes | Type: {entry["node"]["media_type"].upper()}\n')
           i += 1
           
       case Fields.STUDIOS:
@@ -168,13 +168,13 @@ def writeSortedListOnFile(filePath, sortedBy, sortedList):
           outputFile.write(f'{i}. {entry["node"]["title"]} was made by ')
           for studio in entry["node"]["studios"]:
             outputFile.write(f'{studio["name"]}, ',)
-          outputFile.write('\n')
+          outputFile.write('| Type: {entry["node"]["media_type"].upper()}\n')
           i += 1
           
       case Fields.SOURCE:
         i = 1
         for entry in sortedList:
-          outputFile.write(f'{i}. {entry["node"]["title"]} source is {entry["node"]["source"]}\n')
+          outputFile.write(f'{i}. {entry["node"]["title"]} source is {entry["node"]["source"]} | Type: {entry["node"]["media_type"].upper()}\n')
           i += 1
           
       case Fields.SEASON:
@@ -184,18 +184,18 @@ def writeSortedListOnFile(filePath, sortedBy, sortedList):
             seasonInfo = entry["node"]["start_season"]
           except KeyError:
             seasonInfo = {"year": "No info", "season": "No season"}
-          outputFile.write(f'{i}. {entry["node"]["title"]} started in {entry["node"]["start_date"]}, in the {seasonInfo["season"]} of {seasonInfo["year"]}\n')
+          outputFile.write(f'{i}. {entry["node"]["title"]} started in {entry["node"]["start_date"]}, in the {seasonInfo["season"]} of {seasonInfo["year"]} | Type: {entry["node"]["media_type"].upper()}\n')
           i += 1
           
       case Fields.SCORE:
         i = 1
         for entry in sortedList:
-          outputFile.write(f'{i}. {entry["node"]["title"]} | {entry["list_status"]["score"]}\n')
+          outputFile.write(f'{i}. {entry["node"]["title"]} | {entry["list_status"]["score"]} | Type: {entry["node"]["media_type"].upper()}\n')
           i += 1
           
       case Fields.ALPHA:
         i = 1
         for entry in sortedList:
-          outputFile.write(f'{i}. {entry["node"]["title"]}\n')
+          outputFile.write(f'{i}. {entry["node"]["title"]} | Type: {entry["node"]["media_type"].upper()}\n')
           i += 1
     return
