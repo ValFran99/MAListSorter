@@ -7,7 +7,7 @@ def sortByStudios(animeList):
 def cleanStudioList(animeList):
   for animeObject in animeList:
     if not animeObject["node"]["studios"]:
-      animeObject["node"]["studios"] = [{"id": -1, "name": "No studio"}]
+      animeObject["node"]["studios"] = [{"id": 9999, "name": "No studio"}]
       
   return animeList
       

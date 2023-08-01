@@ -14,18 +14,6 @@ SORT_BY_DATA = {
   "Alphabetically": "Alphabetically"
 }
 
-# SORTING_FIELDS = [
-#   "Members", 
-#   "Scoring members",
-#   "Mean score",
-#   "Amount of episodes",
-#   "Studios",
-#   "Source material",
-#   "Start date/season",
-#   "Your score",
-#   "Alphabetically"
-#   ]
-
 class Fields:
   MEMBERS = "Members"
   SCORING_MEMBERS = "Scoring members"
@@ -64,7 +52,7 @@ def sortListBy(sortBy: str, animeList: dict):
     return sortingFunctions.sortByStudios(animeList)
   elif sortBy == "Your score":
     return sortingFunctions.sortByUserScore(animeList)
-  # Any other stuff
+  # Generic sorting
   else:
     return sortingFunctions.genericSorting(animeList, SORT_BY_DATA[sortBy])
 
@@ -100,8 +88,11 @@ def printSortedList(sortedBy: str, sortedList: list):
       i = 1
       for entry in sortedList:
         print(f'{i}. {entry["node"]["title"]} was made by ', end="")
+        studios_string = ""
         for studio in entry["node"]["studios"]:
-          print(f'{studio["name"]}, ', end="")
+          studios_string += studio["name"] + ", "
+          
+        print(f'{studios_string[:-2]} ', end="")
         print(f'| Type: {entry["node"]["media_type"].upper()}')
         i += 1
         

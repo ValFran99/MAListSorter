@@ -22,7 +22,7 @@ def createMainWindow(username: str):
       [sg.Multiline(autoscroll=False, size=(900, 600), auto_refresh=True, reroute_stdout=True, do_not_clear=False)]
   ]
 
-  return sg.Window(f"Welcome {username}!", layout, size=(1000, 600))
+  return sg.Window(f"{username}'s list loaded", layout, size=(1000, 600))
 
 
 def main():
@@ -45,7 +45,7 @@ def main():
     if event == "Save":
       if not sortBy:
         continue
-      saveOnFile(sortBy, sortedList)
+      outputToFile(sortBy, sortedList, username)
       logicCode.printSortedList(sortBy, sortedList)
       None
       
@@ -90,10 +90,6 @@ def createAskForUserListWindow():
   window["usernameInput"].bind("<Return>", "_Enter")
   return window
 
-def saveOnFile(sortedBy: str, sortedList: list):
-  if not outputToFile(sortedBy, sortedList):
-    return
-
 def askForOutputPath():
 
   window = createAskForOutputPathWindow()
@@ -121,14 +117,15 @@ FIELD_FOR_FILE_NAME = {
   "Source material": "SourceMaterial",
   "Start date/season": "StartDate",
   "Alphabetically": "Alphabetically",
-  "Studios": "Studios"
+  "Studios": "Studios",
+  "Your score": "TheirScore"
 }
 
-def outputToFile(sortedBy: str, sortedList: list):
+def outputToFile(sortedBy: str, sortedList: list, username: str):
   fileExitPath = askForOutputPath()
   if fileExitPath == None:
     return False
-  completeExitPath = fileExitPath + "/SortedBy" + FIELD_FOR_FILE_NAME[sortedBy] + ".txt"
+  completeExitPath = fileExitPath + f"/{username}'sListSortedBy" + FIELD_FOR_FILE_NAME[sortedBy] + ".txt"
   logicCode.writeSortedListOnFile(completeExitPath, sortedBy, sortedList)
   return True
 
