@@ -109,7 +109,7 @@ def printSortedList(sortedBy: str, sortedList: list):
           seasonInfo = entry["node"]["start_season"]
         except KeyError:
           seasonInfo = {"year": "No info", "season": "No season"}
-        print(f'{i}. {entry["node"]["title"]} started in {entry["node"]["start_date"]}, in the {seasonInfo["season"]} of {seasonInfo["year"]} | Type: {entry["node"]["media_type"].upper()}')
+        print(f'{i}. {entry["node"]["title"]} started airing in {entry["node"]["start_date"]}, in the {seasonInfo["season"]} of {seasonInfo["year"]} | Type: {entry["node"]["media_type"].upper()}')
         i += 1
         
     case Fields.SCORE:
@@ -175,7 +175,7 @@ def writeSortedListOnFile(filePath: str, sortedBy: str, sortedList: list):
             seasonInfo = entry["node"]["start_season"]
           except KeyError:
             seasonInfo = {"year": "No info", "season": "No season"}
-          outputFile.write(f'{i}. {entry["node"]["title"]} started in {entry["node"]["start_date"]}, in the {seasonInfo["season"]} of {seasonInfo["year"]} | Type: {entry["node"]["media_type"].upper()}\n')
+          outputFile.write(f'{i}. {entry["node"]["title"]} started airing in {entry["node"]["start_date"]}, in the {seasonInfo["season"]} of {seasonInfo["year"]} | Type: {entry["node"]["media_type"].upper()}\n')
           i += 1
           
       case Fields.SCORE:

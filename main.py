@@ -15,11 +15,38 @@ COMBO_LIST = ["Members",
               "Alphabetically"
               ]
 
+STARTING_TEXT = """Welcome to the MAList sorter, you can sort your list by these fields\n
+Members: How many users added it to their list
+Scoring Members: How many members scored it
+Mean score: Global score
+Amount of episodes: How many episodes it has
+Studios: Group anime by studio
+Source material: Group anime by source material
+Start date: The day the anime started airing + season/year
+Your score: The score of the user's list, unscored anime count as 0
+Alphabetically: Self explanatory
+"""
+
+class ComboListFields:
+  MEMBERS = 0
+  SCORING_MEMBERS = 1
+  MEAN = 2
+  EPISODES = 3
+  STUDIOS = 4
+  SOURCE = 5
+  SEASON = 6
+  SCORE = 7
+  ALPHA = 8
+
 def createMainWindow(username: str):
   layout = [
       [sg.Text("Select the desired field to sort")], 
-      [sg.Combo(values=COMBO_LIST, auto_size_text=True, default_value=COMBO_LIST[0], readonly=True, key="-COMBO-"), sg.Button("Sort!"), sg.Button(u"\U0001F4BE" + "  Save on file", auto_size_button=True, key="Save")],
-      [sg.Multiline(autoscroll=False, size=(900, 600), auto_refresh=True, reroute_stdout=True, do_not_clear=False)]
+      [sg.Combo(values=COMBO_LIST, auto_size_text=True, default_value=COMBO_LIST[0], readonly=True, key="-COMBO-"), 
+       sg.Button("Sort!"),
+       sg.Push(), 
+       sg.Button(u"\U0001F4BE" + "  Save on file", auto_size_button=True, key="Save"),
+       sg.Button("Change user?", auto_size_button=True, key="Change", tooltip="Change to a new username")],
+      [sg.Multiline(size=(900, 600), auto_refresh=True, reroute_stdout=True, do_not_clear=False, default_text=STARTING_TEXT)]
   ]
 
   return sg.Window(f"{username}'s list loaded", layout, size=(1000, 600))
@@ -47,7 +74,10 @@ def main():
         continue
       outputToFile(sortBy, sortedList, username)
       logicCode.printSortedList(sortBy, sortedList)
-      None
+    if event == "Change":
+      window.close()
+      main()
+      return
       
   window.close()
 
@@ -110,15 +140,15 @@ def askForOutputPath():
   return path
 
 FIELD_FOR_FILE_NAME = {
-  "Members": "Members",
-  "Scoring members": "ScoringMembers",
-  "Mean score": "MeanScore",
-  "Amount of episodes": "NumOfEpisodes",
-  "Source material": "SourceMaterial",
-  "Start date/season": "StartDate",
-  "Alphabetically": "Alphabetically",
-  "Studios": "Studios",
-  "Your score": "TheirScore"
+  COMBO_LIST[ComboListFields.MEMBERS]: "Members",
+  COMBO_LIST[ComboListFields.SCORING_MEMBERS]: "ScoringMembers",
+  COMBO_LIST[ComboListFields.MEAN]: "MeanScore",
+  COMBO_LIST[ComboListFields.EPISODES]: "NumOfEpisodes",
+  COMBO_LIST[ComboListFields.SOURCE]: "SourceMaterial",
+  COMBO_LIST[ComboListFields.SEASON]: "StartDate",
+  COMBO_LIST[ComboListFields.ALPHA]: "Alphabetically",
+  COMBO_LIST[ComboListFields.STUDIOS]: "Studios",
+  COMBO_LIST[ComboListFields.SCORE]: "TheirScore"
 }
 
 def outputToFile(sortedBy: str, sortedList: list, username: str):
