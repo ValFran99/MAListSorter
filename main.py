@@ -71,6 +71,7 @@ def main():
       logicCode.printSortedList(sortBy, sortedList)
     if event == "Save":
       if not sortBy:
+        winsound.PlaySound("Windows Ding.wav", winsound.SND_FILENAME | winsound.SND_ASYNC)
         continue
       outputToFile(sortBy, sortedList, username)
       logicCode.printSortedList(sortBy, sortedList)
