@@ -1,8 +1,20 @@
 import requests
 import sortingFunctions
 import os
+import sys
 
-CRED_FILE = "credentials"
+# For PyInstaller
+def resourcePath(relativePath: str):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        basePath = sys._MEIPASS
+    except Exception:
+        basePath = os.path.abspath(".")
+
+    return os.path.join(basePath, relativePath)
+
+CRED_FILE = resourcePath("credentials")
 
 COMBO_LIST = ["Members", 
               "Scoring members", 
