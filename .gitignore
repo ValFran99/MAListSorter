@@ -164,14 +164,4 @@ credentials
 
 # Temp files from windows?
 tempCodeRunnerFile.py
-
-sortedAlphabetically.txt
-sortedByEpisodes.txt
-sortedByMeanScore.txt
-sortedByScoringMembers.txt
-sortedBySource.txt
-sortedByStartDate.txt
-sortedByStudios.txt
-sortedByUserScore.txt
-sortedListByMembers.txt
 configForPyToExe.json
