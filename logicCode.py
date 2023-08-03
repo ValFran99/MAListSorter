@@ -4,26 +4,48 @@ import os
 
 CRED_FILE = "credentials"
 
-SORT_BY_DATA = {
-  "Members": "num_list_users",
-  "Scoring members": "num_scoring_users",
-  "Mean score": "mean",
-  "Amount of episodes": "num_episodes",
-  "Source material": "source",
-  "Start date/season": "start_date",
-  "Alphabetically": "Alphabetically"
-}
+COMBO_LIST = ["Members", 
+              "Scoring members", 
+              "Mean score", 
+              "Amount of episodes", 
+              "Studios", 
+              "Source material type", 
+              "Airing date/season", 
+              "User score", 
+              "Alphabetically"
+              ]
+
+class ComboListFields:
+  MEMBERS = 0
+  SCORING_MEMBERS = 1
+  MEAN = 2
+  EPISODES = 3
+  STUDIOS = 4
+  SOURCE = 5
+  SEASON = 6
+  SCORE = 7
+  ALPHA = 8
 
 class Fields:
-  MEMBERS = "Members"
-  SCORING_MEMBERS = "Scoring members"
-  MEAN = "Mean score"
-  EPISODES = "Amount of episodes"
-  STUDIOS = "Studios"
-  SOURCE = "Source material"
-  SEASON = "Start date/season"
-  SCORE = "Your score"
-  ALPHA = "Alphabetically"
+  MEMBERS = COMBO_LIST[ComboListFields.MEMBERS]
+  SCORING_MEMBERS = COMBO_LIST[ComboListFields.SCORING_MEMBERS]
+  MEAN = COMBO_LIST[ComboListFields.MEAN]
+  EPISODES = COMBO_LIST[ComboListFields.EPISODES]
+  STUDIOS = COMBO_LIST[ComboListFields.STUDIOS]
+  SOURCE = COMBO_LIST[ComboListFields.SOURCE]
+  SEASON = COMBO_LIST[ComboListFields.SEASON]
+  SCORE = COMBO_LIST[ComboListFields.SCORE]
+  ALPHA = COMBO_LIST[ComboListFields.ALPHA]
+
+API_DATA_NAMES = {
+  Fields.MEMBERS: "num_list_users",
+  Fields.SCORING_MEMBERS: "num_scoring_users",
+  Fields.MEAN: "mean",
+  Fields.EPISODES: "num_episodes",
+  Fields.SOURCE: "source",
+  Fields.SEASON: "start_date",
+  Fields.ALPHA: "Alphabetically"
+}
 
 def getClientID():
   with open(CRED_FILE, "r") as credFile:
@@ -48,13 +70,13 @@ def getListFromUser(username: str):
 
 
 def sortListBy(sortBy: str, animeList: dict):
-  if sortBy == "Studios":
+  if sortBy == Fields.STUDIOS:
     return sortingFunctions.sortByStudios(animeList)
-  elif sortBy == "Your score":
+  elif sortBy == Fields.SCORE:
     return sortingFunctions.sortByUserScore(animeList)
   # Generic sorting
   else:
-    return sortingFunctions.genericSorting(animeList, SORT_BY_DATA[sortBy])
+    return sortingFunctions.genericSorting(animeList, API_DATA_NAMES[sortBy])
 
 
 def printSortedList(sortedBy: str, sortedList: list):
