@@ -31,37 +31,6 @@ def createMainWindow(username: str):
   return sg.Window(f"{username}'s list loaded", layout, size=(1000, 600))
 
 
-def main():
-
-  username, animeList = askForUserList()
-  if(username == None):
-    return
-
-  window = createMainWindow(username)
-  sortBy = None
-
-  while True:
-    event, values = window.read()
-    if event == sg.WIN_CLOSED:
-      break
-    if event == "Sort!":
-      sortBy = values["-COMBO-"]
-      sortedList = logicCode.sortListBy(sortBy, animeList)
-      logicCode.printSortedList(sortBy, sortedList)
-    if event == "Save":
-      if not sortBy:
-        winsound.PlaySound("Windows Ding.wav", winsound.SND_FILENAME | winsound.SND_ASYNC)
-        continue
-      outputToFile(sortBy, sortedList, username)
-      logicCode.printSortedList(sortBy, sortedList)
-    if event == "Change":
-      window.close()
-      main()
-      return
-      
-  window.close()
-
-
 def askForUserList():
   
   window = createAskForUserListWindow()
@@ -90,6 +59,7 @@ def askForUserList():
     
       return username, animeList
 
+
 def createAskForUserListWindow():
   layout = [
       [sg.Text(USERNAME_INPUT_WINDOW_TEXT, justification="center", key="userWindowText")],
@@ -99,6 +69,7 @@ def createAskForUserListWindow():
                               element_justification='c', finalize=True, return_keyboard_events=True)
   window["usernameInput"].bind("<Return>", "_Enter")
   return window
+
 
 def askForOutputPath():
 
@@ -119,6 +90,17 @@ def askForOutputPath():
 
   return path
 
+
+def createAskForOutputPathWindow():
+  layout = [
+      [sg.Text("Choose the exit folder", size=(100, None), justification="center")],
+      [sg.In(), sg.FolderBrowse()],
+      [sg.Button("Submit")]
+  ]
+  window = sg.Window("Fileout choice", layout, size=(500, 100), element_justification='c', modal=True)
+  return window
+
+
 FIELD_FOR_FILE_NAME = {
   logicCode.COMBO_LIST[logicCode.ComboListFields.MEMBERS]: "Members",
   logicCode.COMBO_LIST[logicCode.ComboListFields.SCORING_MEMBERS]: "ScoringMembers",
@@ -131,6 +113,7 @@ FIELD_FOR_FILE_NAME = {
   logicCode.COMBO_LIST[logicCode.ComboListFields.SCORE]: "TheirScore"
 }
 
+
 def outputToFile(sortedBy: str, sortedList: list, username: str):
   fileExitPath = askForOutputPath()
   if fileExitPath == None:
@@ -140,13 +123,36 @@ def outputToFile(sortedBy: str, sortedList: list, username: str):
   return True
 
 
-def createAskForOutputPathWindow():
-  layout = [
-      [sg.Text("Choose the exit folder", size=(100, None), justification="center")],
-      [sg.In(), sg.FolderBrowse()],
-      [sg.Button("Submit")]
-  ]
-  window = sg.Window("Fileout choice", layout, size=(500, 100), element_justification='c', modal=True)
-  return window
+def main():
+
+  username, animeList = askForUserList()
+  if(username == None):
+    return
+
+  window = createMainWindow(username)
+  sortBy = None
+
+  while True:
+    event, values = window.read()
+    match event:
+      case sg.WIN_CLOSED:
+        break
+      case "Sort!":
+        sortBy = values["-COMBO-"]
+        sortedList = logicCode.sortListBy(sortBy, animeList)
+        logicCode.printSortedList(sortBy, sortedList)
+      case "Save":
+        if not sortBy:
+          winsound.PlaySound("Windows Ding.wav", winsound.SND_FILENAME | winsound.SND_ASYNC)
+          continue
+        outputToFile(sortBy, sortedList, username)
+        logicCode.printSortedList(sortBy, sortedList)
+      case "Change":
+        window.close()
+        main()
+        return
+      
+  window.close()
+
 
 main()

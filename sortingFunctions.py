@@ -11,6 +11,7 @@ def cleanStudioList(animeList):
       
   return animeList
       
+
 def sortByUserScore(animeList):
   sortedByUserScore = sorted(animeList["data"], key=lambda x: x["list_status"]["score"], reverse=True)
   return sortedByUserScore
