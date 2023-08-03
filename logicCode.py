@@ -192,7 +192,7 @@ def writeSortedListOnFile(filePath: str, sortedBy: str, sortedList: list):
           outputFile.write(f'{i}. {entry["node"]["title"]} was made by ')
           for studio in entry["node"]["studios"]:
             outputFile.write(f'{studio["name"]}, ',)
-          outputFile.write('| Type: {entry["node"]["media_type"].upper()}\n')
+          outputFile.write(f'| Type: {entry["node"]["media_type"].upper()}\n')
           i += 1
           
       case Fields.SOURCE:
