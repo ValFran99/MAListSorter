@@ -132,7 +132,7 @@ def printSortedList(sortedBy: str, sortedList: list):
     case Fields.SOURCE:
       i = 1
       for entry in sortedList:
-        print(f'{i}. {entry["node"]["title"]} source is {entry["node"]["source"]} | Type: {entry["node"]["media_type"].upper()}')
+        print(f'{i}. {entry["node"]["title"]} source is {entry["node"]["source"].replace("_", " ").upper()} | Type: {entry["node"]["media_type"].upper()}')
         i += 1
         
     case Fields.SEASON:

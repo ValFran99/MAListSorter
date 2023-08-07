@@ -5,7 +5,7 @@ import winsound
 USERNAME_INPUT_WINDOW_TEXT = "Enter your MyAnimeList username, your list needs to be public"
 
 
-STARTING_TEXT = """Welcome to the MAList sorter, you can sort your list by these fields\n
+STARTING_TEXT = """Welcome to the MAList sorter, you can sort the list by these fields\n
 Members: How many users added the anime to their list
 Scoring Members: How many members scored it
 Mean score: Global score
@@ -13,7 +13,7 @@ Amount of episodes: How many episodes it has
 Studios: Group anime by studio
 Source material: Group anime by source material
 Airing date: The date the anime started airing + season
-User score: The score of the user's list, unscored anime count as 0
+User score: The score given by the user, unscored anime equals to a score of 0
 Alphabetically: Self explanatory
 """
 
@@ -24,7 +24,7 @@ def createMainWindow(username: str):
        sg.Button("Sort!"),
        sg.Push(), 
        sg.Button(u"\U0001F4BE" + "  Save on file", auto_size_button=True, key="Save"),
-       sg.Button("Change user?", auto_size_button=True, key="Change", tooltip="Change to a new username")],
+       sg.Button("Change user", auto_size_button=True, key="Change")],
       [sg.Multiline(size=(900, 600), auto_refresh=True, reroute_stdout=True, do_not_clear=False, default_text=STARTING_TEXT)]
   ]
 
@@ -33,7 +33,7 @@ def createMainWindow(username: str):
 
 def askForUserList():
   
-  window = createAskForUserListWindow()
+  window = createAskForUsernameWindow()
   while True:
     event, values = window.read()
     if event == sg.WIN_CLOSED or event == "Escape:27":
@@ -52,7 +52,7 @@ def askForUserList():
       
       if not animeList:
         winsound.PlaySound("Windows Ding.wav", winsound.SND_FILENAME | winsound.SND_ASYNC)
-        sg.popup("The list is set to private or the username doesn't exist", any_key_closes=True)
+        sg.popup("The list is set to private or the user doesn't exist", any_key_closes=True)
         continue
       
       window.close()
@@ -60,7 +60,7 @@ def askForUserList():
       return username, animeList
 
 
-def createAskForUserListWindow():
+def createAskForUsernameWindow():
   layout = [
       [sg.Text(USERNAME_INPUT_WINDOW_TEXT, justification="center", key="userWindowText")],
       [sg.Input(key="usernameInput")]
