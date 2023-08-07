@@ -5,14 +5,14 @@ import sys
 
 # For PyInstaller
 def resourcePath(relativePath: str):
-    """ Get absolute path to resource, works for dev and for PyInstaller """
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        basePath = sys._MEIPASS
-    except Exception:
-        basePath = os.path.abspath(".")
+  """ Get absolute path to resource, works for dev and for PyInstaller """
+  try:
+    # PyInstaller creates a temp folder and stores path in _MEIPASS
+    basePath = sys._MEIPASS
+  except Exception:
+    basePath = os.path.abspath(".")
 
-    return os.path.join(basePath, relativePath)
+  return os.path.join(basePath, relativePath)
 
 CRED_FILE = resourcePath("credentials")
 
